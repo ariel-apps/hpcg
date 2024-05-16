@@ -61,6 +61,10 @@ using std::endl;
 #include "TestSymmetry.hpp"
 #include "TestNorms.hpp"
 
+#ifdef USE_ARIELAPI
+#include <arielapi.h>
+#endif
+
 /*!
   Main driver program: Construct synthetic problem, run V&V tests, compute benchmark parameters, run benchmark, report results.
 
@@ -293,6 +297,7 @@ int main(int argc, char * argv[]) {
     if (current_time > opt_worst_time) opt_worst_time = current_time;
   }
 
+
 #ifndef HPCG_NO_MPI
 // Get the absolute worst time across all MPI ranks (time in CG can be different)
   double local_opt_worst_time = opt_worst_time;
@@ -326,6 +331,10 @@ int main(int argc, char * argv[]) {
 
   /* This is the timed run for a specified amount of time. */
 
+#ifdef USE_ARIELAPI
+ariel_enable();
+#endif
+
   optMaxIters = optNiters;
   double optTolerance = 0.0;  // Force optMaxIters iterations
   TestNormsData testnorms_data;
@@ -347,6 +356,10 @@ int main(int argc, char * argv[]) {
   ierr = ComputeResidual(A.localNumberOfRows, x, xexact, residual);
   if (ierr) HPCG_fout << "Error in call to compute_residual: " << ierr << ".\n" << endl;
   if (rank==0) HPCG_fout << "Difference between computed and exact  = " << residual << ".\n" << endl;
+#endif
+
+#ifdef USE_ARIELAPI
+ariel_disable();
 #endif
 
   // Test Norm Results
