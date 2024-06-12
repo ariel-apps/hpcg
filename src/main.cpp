@@ -332,7 +332,8 @@ int main(int argc, char * argv[]) {
   /* This is the timed run for a specified amount of time. */
 
 #ifdef USE_ARIELAPI
-ariel_enable();
+  ariel_output_stats();
+  ariel_enable();
 #endif
 
   optMaxIters = optNiters;
@@ -359,7 +360,8 @@ ariel_enable();
 #endif
 
 #ifdef USE_ARIELAPI
-ariel_disable();
+  ariel_output_stats();
+  ariel_disable();
 #endif
 
   // Test Norm Results
