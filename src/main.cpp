@@ -331,16 +331,16 @@ int main(int argc, char * argv[]) {
 
   /* This is the timed run for a specified amount of time. */
 
-#ifdef USE_ARIELAPI
-  ariel_output_stats();
-  ariel_enable();
-#endif
-
   optMaxIters = optNiters;
   double optTolerance = 0.0;  // Force optMaxIters iterations
   TestNormsData testnorms_data;
   testnorms_data.samples = numberOfCgSets;
   testnorms_data.values = new double[numberOfCgSets];
+
+#ifdef USE_ARIELAPI
+  ariel_output_stats();
+  ariel_enable();
+#endif
 
   for (int i=0; i< numberOfCgSets; ++i) {
     ZeroVector(x); // Zero out x
@@ -350,6 +350,11 @@ int main(int argc, char * argv[]) {
     testnorms_data.values[i] = normr/normr0; // Record scaled residual from this run
   }
 
+#ifdef USE_ARIELAPI
+  ariel_output_stats();
+  ariel_disable();
+#endif
+
   // Compute difference between known exact solution and computed solution
   // All processors are needed here.
 #ifdef HPCG_DEBUG
@@ -357,11 +362,6 @@ int main(int argc, char * argv[]) {
   ierr = ComputeResidual(A.localNumberOfRows, x, xexact, residual);
   if (ierr) HPCG_fout << "Error in call to compute_residual: " << ierr << ".\n" << endl;
   if (rank==0) HPCG_fout << "Difference between computed and exact  = " << residual << ".\n" << endl;
-#endif
-
-#ifdef USE_ARIELAPI
-  ariel_output_stats();
-  ariel_disable();
 #endif
 
   // Test Norm Results
