@@ -17,6 +17,7 @@
 #include <list>
 #include <sstream>
 #include <string>
+#include <cstdio>
 
 #include "OutputFile.hpp"
 
@@ -118,8 +119,15 @@ OutputFile::generate(void) {
   sprintf (sdate,"%04d-%02d-%02d_%02d-%02d-%02d",ptm->tm_year + 1900, ptm->tm_mon+1,
         ptm->tm_mday, ptm->tm_hour, ptm->tm_min,ptm->tm_sec);
 
-  string filename = name + "_" + version + "_";
-  filename += string(sdate) + ".txt";
+  const char *hpcg_out = std::getenv("HPCG_OUT");
+
+  string filename;
+  if (hpcg_out) {
+    filename = hpcg_out;
+  } else {
+    filename = name + "_" + version + "_";
+    filename += string(sdate) + ".txt";
+  }
 
   ofstream myfile(filename.c_str());
   myfile << result;
